@@ -69,7 +69,11 @@
         .explanation-box { font-size: 13px; color: #4a5568; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 8px; line-height: 1.6; }
 
         .qr-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #cbd5e0; text-align: center; }
+        
+        /* 这里的样式为了配合加载提示做了微调 */
+        .qr-wrapper { min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .qr-img { width: 260px; height: auto; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
         .cta-text { font-size: 14px; color: #4a5568; line-height: 1.8; }
         .highlight-brand { color: #2b6cb0; font-weight: bold; font-size: 15px; }
         .highlight-action { color: #e53e3e; font-weight: bold; }
@@ -118,7 +122,16 @@
         <div class="explanation-box" id="explanation"></div>
         
         <div class="qr-section">
-            <img src="qrcode.png" alt="扫码关注" class="qr-img" onerror="this.style.display='none';alert('图片未显示，请确认GitHub文件名为qrcode.png')">
+            <div class="qr-wrapper">
+                <p id="loadingTip" style="font-size: 12px; color: #999; margin-bottom: 5px;">
+                    (图片加载中...如遇卡顿请刷新)
+                </p>
+                
+                <img src="qrcode.png" alt="扫码关注" class="qr-img" 
+                     onload="document.getElementById('loadingTip').style.display='none'"
+                     onerror="this.style.display='none';alert('图片未显示，请确认GitHub文件名为qrcode.png')">
+            </div>
+
             <div class="cta-text">
                 关注微信公众号 <span class="highlight-brand">[家有港宝养成笔记]</span><br>
                 加 <span class="highlight-action">大D</span> 为好友<br>
@@ -136,7 +149,7 @@
         
         // --- 逻辑升级：三重拦截 ---
         
-        // 1. 检查是否为空 (如果填了非法日期，浏览器通常会返回空值)
+        // 1. 检查是否为空
         if (!dobInput) { 
             alert("请选择有效的出生日期！\n(如果手动输入，请确保格式正确且年份合理)"); 
             return; 
@@ -146,16 +159,16 @@
         const birthYear = dob.getFullYear();
         const birthMonth = dob.getMonth() + 1; 
 
-        // 2. 检查是否是无效日期 (NaN)
+        // 2. 检查是否是无效日期
         if (isNaN(birthYear)) {
             alert("日期格式错误，请重新选择。");
             return;
         }
 
-        // 3. 检查年份范围 (彻底杜绝 6 位数年份)
+        // 3. 检查年份范围
         if (birthYear < 2005 || birthYear > 2030) {
             alert("⚠️ 日期输入有误！\n\n本工具仅支持测评 2005年 - 2030年 出生的孩子。\n您输入的年份是：" + birthYear);
-            return; // 强制停止
+            return; 
         }
         
         let gradeText = "";
