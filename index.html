@@ -3,41 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港名校入学级数精准测评器</title>
+    <title>香港插班/入学年级精准测评</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
-        h2 { text-align: center; color: #1a202c; margin-bottom: 5px; font-weight: 700; font-size: 22px; }
-        .subtitle { text-align: center; color: #718096; font-size: 14px; margin-bottom: 25px; }
+        /* 页面整体风格 */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            background-color: #f4f6f8; 
+            color: #333; 
+            padding: 20px; 
+            line-height: 1.5;
+        }
+        
+        /* 卡片容器 */
+        .container { 
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+        }
+
+        /* 标题 */
+        h2 { 
+            text-align: center; 
+            color: #1a202c; 
+            margin: 0 0 5px 0; 
+            font-weight: 700; 
+            font-size: 22px; 
+        }
+        .subtitle { 
+            text-align: center; 
+            color: #718096; 
+            font-size: 13px; 
+            margin-bottom: 25px; 
+        }
+
+        /* 表单区域 */
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #4a5568; }
-        .sub-label { font-size: 12px; color: #718096; font-weight: 400; margin-left: 5px; }
+        .sub-label { font-size: 12px; color: #718096; font-weight: normal; margin-left: 5px; }
         
-        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #fff; transition: border-color 0.2s; }
-        input:focus, select:focus { border-color: #3182ce; outline: none; }
-        
-        /* Radio Button Group */
+        input[type="date"], select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            background-color: #fff; 
+            outline: none;
+        }
+        input[type="date"]:focus, select:focus { border-color: #3182ce; }
+
+        /* 单选按钮组 (School Type) */
         .radio-group { display: flex; gap: 10px; }
         .radio-option { flex: 1; }
         .radio-option input { display: none; }
         .radio-option label { 
-            display: block; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; 
-            text-align: center; font-size: 13px; cursor: pointer; color: #718096; 
+            display: block; 
+            padding: 10px 5px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            text-align: center; 
+            font-size: 13px; 
+            cursor: pointer; 
+            color: #718096; 
+            background: #f8fafc;
+            transition: all 0.2s;
         }
         .radio-option input:checked + label {
-            background-color: #ebf8ff; border-color: #3182ce; color: #2c5282; font-weight: bold;
+            background-color: #ebf8ff; 
+            border-color: #3182ce; 
+            color: #2b6cb0; 
+            font-weight: bold;
         }
 
-        button { width: 100%; padding: 15px; background-color: #3182ce; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2); transition: transform 0.1s; }
+        /* 测评按钮 */
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #3182ce; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2); 
+        }
         button:active { transform: scale(0.98); }
 
-        .result-box { margin-top: 25px; padding: 20px; background-color: #ebf8ff; border-radius: 10px; border: 1px solid #bee3f8; display: none; }
-        .main-grade { font-size: 24px; font-weight: 800; color: #2b6cb0; text-align: center; margin-bottom: 10px; }
-        .sub-info { font-size: 14px; color: #4a5568; line-height: 1.6; background: rgba(255,255,255,0.6); padding: 10px; border-radius: 6px; margin-top: 10px;}
+        /* 结果展示区 */
+        .result-box { 
+            margin-top: 25px; 
+            padding: 20px; 
+            background-color: #ebf8ff; 
+            border-radius: 12px; 
+            border: 1px solid #bee3f8; 
+            display: none; /* 默认隐藏 */
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-header { font-size: 13px; color: #4299e1; text-align: center; margin-bottom: 5px; letter-spacing: 1px; font-weight: bold; }
+        .main-grade { font-size: 26px; font-weight: 800; color: #2b6cb0; text-align: center; margin-bottom: 15px; }
         
-        /* 二维码区域样式 */
-        .qr-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #cbd5e0; text-align: center; }
-        .qr-img { width: 280px; height: auto; margin-bottom: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .explanation-box {
+            font-size: 13px;
+            color: #4a5568;
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        /* 底部引流区 (二维码) */
+        .qr-section { 
+            margin-top: 25px; 
+            padding-top: 20px; 
+            border-top: 1px dashed #cbd5e0; 
+            text-align: center; 
+        }
+        
+        /* 核心修改：让图片好看的样式 */
+        .qr-img { 
+            width: 260px; /* 宽度适中 */
+            height: auto; /* 高度自动，防止压扁 */
+            margin-bottom: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 加一点阴影更有质感 */
+        }
+        
         .cta-text { font-size: 14px; color: #4a5568; line-height: 1.8; }
         .highlight-brand { color: #2b6cb0; font-weight: bold; font-size: 15px; }
         .highlight-action { color: #e53e3e; font-weight: bold; }
@@ -46,8 +144,8 @@
 <body>
 
 <div class="container">
-    <h2>🏫 香港学校入学测评 Pro</h2>
-    <p class="subtitle">精准匹配本地学制与英/美学制差异</p>
+    <h2>🎓 香港入学年级测评 Pro</h2>
+    <p class="subtitle">精准匹配本地学制与国际学制差异</p>
     
     <div class="form-group">
         <label>孩子的出生日期</label>
@@ -69,11 +167,11 @@
         <div class="radio-group">
             <div class="radio-option">
                 <input type="radio" name="schoolType" id="typeLocal" value="local" checked>
-                <label for="typeLocal">本地/英基/加拿大<br><span style="font-size:10px">(1月-12月计算)</span></label>
+                <label for="typeLocal">本地/英基/加拿大<br><span style="font-size:10px">(按出生年份切分)</span></label>
             </div>
             <div class="radio-option">
                 <input type="radio" name="schoolType" id="typeUk" value="uk">
-                <label for="typeUk">传统英式/哈罗<br><span style="font-size:10px">(9月-8月计算)</span></label>
+                <label for="typeUk">传统英式/哈罗<br><span style="font-size:10px">(按9月1日切分)</span></label>
             </div>
         </div>
     </div>
@@ -81,11 +179,13 @@
     <button onclick="calculateGrade()">生成测评报告</button>
 
     <div id="result" class="result-box">
+        <div class="result-header">RECOMMENDED GRADE</div>
         <div class="main-grade" id="gradeDisplay"></div>
-        <div class="sub-info" id="explanation"></div>
+        <div class="explanation-box" id="explanation"></div>
         
         <div class="qr-section">
-            <img src="qrcode.png" alt="扫码关注" class="qr-img">
+            <img src="qrcode.png" alt="扫码关注" class="qr-img" onerror="this.style.display='none';alert('图片未显示，请确认GitHub文件名为qrcode.png')">
+            
             <div class="cta-text">
                 关注微信公众号 <span class="highlight-brand">[家有港宝养成笔记]</span><br>
                 加 <span class="highlight-action">大D</span> 为好友<br>
@@ -101,7 +201,7 @@
         const targetYear = parseInt(document.getElementById('targetYear').value);
         const schoolType = document.querySelector('input[name="schoolType"]:checked').value;
         
-        if (!dobInput) { alert("请选择出生日期"); return; }
+        if (!dobInput) { alert("请先选择出生日期"); return; }
         
         const dob = new Date(dobInput);
         const birthYear = dob.getFullYear();
@@ -110,60 +210,79 @@
         let gradeText = "";
         let logicText = "";
 
+        // --- 逻辑分支 ---
+
         if (schoolType === 'local') {
-            // --- 逻辑 A：自然年 (1.1 - 12.31) ---
-            let ageByYear = targetYear - birthYear;
+            // 逻辑 A：自然年 (1.1 - 12.31)
+            // 适用：本地(Local), ESF(新), CDNIS, AISHK(1月入学但通常按年)
+            // 核心公式：入学年 - 出生年 = 满周岁
+            // 6岁入读 P1
             
-            if (ageByYear === 2) gradeText = "PN (学前班)";
-            else if (ageByYear === 3) gradeText = "K1 (幼儿班)";
-            else if (ageByYear === 4) gradeText = "K2 (低班)";
-            else if (ageByYear === 5) gradeText = "K3 (高班) / ESF Year 1"; 
-            else if (ageByYear === 6) gradeText = "P1 (小一) / ESF Year 2";
+            let ageInSept = targetYear - birthYear;
             
-            // 修正：P6 之后 直升 S1 (中一)
-            // 6岁 P1 -> 7岁 P2 -> 8岁 P3 -> 9岁 P4 -> 10岁 P5 -> 11岁 P6
-            // 12岁 S1
-            else if (ageByYear > 6 && ageByYear <= 11) {
-                gradeText = `P${ageByYear - 5} (小${ageByYear - 5})`;
+            if (ageInSept === 2) gradeText = "PN (学前班)";
+            else if (ageInSept === 3) gradeText = "K1 (幼儿班)";
+            else if (ageInSept === 4) gradeText = "K2 (低班)";
+            else if (ageInSept === 5) gradeText = "K3 (高班) / ESF Year 1"; 
+            else if (ageInSept === 6) gradeText = "P1 (小一) / ESF Year 2";
+            
+            // 修正：P6 升 S1 逻辑
+            // P1(6), P2(7), P3(8), P4(9), P5(10), P6(11)
+            else if (ageInSept > 6 && ageInSept <= 11) {
+                gradeText = `P${ageInSept - 5} (小${ageInSept - 5})`;
             }
-            else if (ageByYear > 11 && ageByYear <= 17) {
-                gradeText = `S${ageByYear - 11} (中${ageByYear - 11})`;
+            // S1(12) ...
+            else if (ageInSept > 11 && ageInSept <= 17) {
+                gradeText = `S${ageInSept - 11} (中${ageInSept - 11})`;
             }
-            else if (ageByYear > 17) {
+            else if (ageInSept > 17) {
                 gradeText = "大专/大学阶段";
             }
             else {
-                gradeText = "年龄偏小 (未达入学年龄)";
+                gradeText = "宝宝太小啦 (未达入学年龄)";
             }
 
-            logicText = `依据<strong>自然年</strong>计算（1月1日-12月31日划线）。<br>适用于：所有本地学校、英基(ESF)、加拿大国际等。<br>注：本地学制完成 P6 后直升 S1 (中一)。`;
+            logicText = `✅ <strong>计算规则：</strong> 依据【自然年】（1月1日-12月31日）划分。<br>📌 <strong>适用学校：</strong> 所有本地官津/直资/私立学校、英基(ESF)、加拿大国际(CDNIS)等。<br>💡 <strong>提示：</strong> 本地学制完成 P6 后直升 S1 (中一)。`;
         } else {
-            // --- 逻辑 B：学年 (9.1 - 8.31) ---
+            // 逻辑 B：严格学术年 (9.1 - 8.31)
+            // 适用：Harrow, Kellett 等传统英式
+            // 逻辑：9月1日是分界线。9月出生的孩子算下一年。
+            
             let cohortYear = birthYear;
             if (birthMonth >= 9) cohortYear += 1; 
             
+            // 英国学制：5岁读 Year 1
+            // 计算入学当年9月的“学制年龄”
             let ukAge = targetYear - cohortYear;
             
             if (ukAge === 3) gradeText = "Nursery";
             else if (ukAge === 4) gradeText = "Reception";
             else if (ukAge === 5) gradeText = "Year 1";
             else if (ukAge === 6) gradeText = "Year 2";
-            else if (ukAge > 6 && ukAge <= 18) {
-                gradeText = `Year ${ukAge - 4}`;
+            else if (ukAge > 6 && ukAge <= 13) {
+                 gradeText = `Year ${ukAge - 4}`;
             }
-            else if (ukAge > 18) {
+            // Year 10 - Year 13
+            else if (ukAge > 13 && ukAge <= 18) {
+                 gradeText = `Year ${ukAge - 4} (中学/高中)`;
+            }
+             else if (ukAge > 18) {
                  gradeText = "大学阶段";
             }
             else {
-                 gradeText = "年龄偏小";
+                 gradeText = "宝宝太小啦";
             }
 
-            logicText = `依据<strong>学术年</strong>计算（9月1日-8月31日划线）。<br>注意：9月-12月出生的“细B”通常会读低一级。<br>适用于：哈罗、Kellett等传统英式私校。`;
+            logicText = `✅ <strong>计算规则：</strong> 依据【学术年】（9月1日-8月31日）划分。<br>📌 <strong>适用学校：</strong> 哈罗(Harrow)、启历(Kellett) 等传统英式私校。<br>💡 <strong>注意：</strong> 9月-12月出生的“细B”通常会读低一级，在班级里做“大哥哥/大姐姐”。`;
         }
 
+        // 显示结果
         document.getElementById('result').style.display = "block";
         document.getElementById('gradeDisplay').innerText = gradeText;
         document.getElementById('explanation').innerHTML = logicText;
+        
+        // 自动滚动到底部，确保看到二维码
+        document.getElementById('result').scrollIntoView({behavior: "smooth"});
     }
 </script>
 
