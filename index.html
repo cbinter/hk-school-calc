@@ -120,12 +120,13 @@
             else if (ageByYear === 5) gradeText = "K3 (高班) / ESF Year 1"; 
             else if (ageByYear === 6) gradeText = "P1 (小一) / ESF Year 2";
             
-            // 修正：P1-P6 之后升 S1-S6
+            // 修正：P6 之后 直升 S1 (中一)
+            // 6岁 P1 -> 7岁 P2 -> 8岁 P3 -> 9岁 P4 -> 10岁 P5 -> 11岁 P6
+            // 12岁 S1
             else if (ageByYear > 6 && ageByYear <= 11) {
                 gradeText = `P${ageByYear - 5} (小${ageByYear - 5})`;
             }
             else if (ageByYear > 11 && ageByYear <= 17) {
-                // 12岁是中一 (S1)
                 gradeText = `S${ageByYear - 11} (中${ageByYear - 11})`;
             }
             else if (ageByYear > 17) {
