@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>香港插班/入学年级精准测评</title>
     <style>
-        /* --- 样式保持不变，维持美观 --- */
+        /* --- 样式部分 (保持完美美化版) --- */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
             background-color: #f4f6f8; 
@@ -134,18 +134,28 @@
         const targetYear = parseInt(document.getElementById('targetYear').value);
         const schoolType = document.querySelector('input[name="schoolType"]:checked').value;
         
-        if (!dobInput) { alert("请先选择出生日期"); return; }
+        // --- 逻辑升级：三重拦截 ---
+        
+        // 1. 检查是否为空 (如果填了非法日期，浏览器通常会返回空值)
+        if (!dobInput) { 
+            alert("请选择有效的出生日期！\n(如果手动输入，请确保格式正确且年份合理)"); 
+            return; 
+        }
         
         const dob = new Date(dobInput);
         const birthYear = dob.getFullYear();
         const birthMonth = dob.getMonth() + 1; 
 
-        // --- 核心修改2：防呆逻辑验证 ---
-        // 检查年份是否合理 (比如必须在 2000年 - 2030年之间)
-        // 如果输入了 6位数的年份，birthYear 会非常大，直接会被拦住
-        if (birthYear < 2000 || birthYear > 2030) {
-            alert("日期输入有误！年份必须在 2000-2030 之间。");
-            return; // 停止计算
+        // 2. 检查是否是无效日期 (NaN)
+        if (isNaN(birthYear)) {
+            alert("日期格式错误，请重新选择。");
+            return;
+        }
+
+        // 3. 检查年份范围 (彻底杜绝 6 位数年份)
+        if (birthYear < 2005 || birthYear > 2030) {
+            alert("⚠️ 日期输入有误！\n\n本工具仅支持测评 2005年 - 2030年 出生的孩子。\n您输入的年份是：" + birthYear);
+            return; // 强制停止
         }
         
         let gradeText = "";
