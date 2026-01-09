@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港名校入学级数精准测评器</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #1a202c; margin-bottom: 5px; font-weight: 700; font-size: 22px; }
+        .subtitle { text-align: center; color: #718096; font-size: 14px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #4a5568; }
+        .sub-label { font-size: 12px; color: #718096; font-weight: 400; margin-left: 5px; }
+        
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #fff; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: #3182ce; outline: none; }
+        
+        /* Radio Button Group */
+        .radio-group { display: flex; gap: 10px; }
+        .radio-option { flex: 1; }
+        .radio-option input { display: none; }
+        .radio-option label { 
+            display: block; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; 
+            text-align: center; font-size: 13px; cursor: pointer; color: #718096; 
+        }
+        .radio-option input:checked + label {
+            background-color: #ebf8ff; border-color: #3182ce; color: #2c5282; font-weight: bold;
+        }
+
+        button { width: 100%; padding: 15px; background-color: #3182ce; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2); transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+
+        .result-box { margin-top: 25px; padding: 20px; background-color: #ebf8ff; border-radius: 10px; border: 1px solid #bee3f8; display: none; }
+        .main-grade { font-size: 24px; font-weight: 800; color: #2b6cb0; text-align: center; margin-bottom: 10px; }
+        .sub-info { font-size: 14px; color: #4a5568; line-height: 1.6; background: rgba(255,255,255,0.6); padding: 10px; border-radius: 6px; margin-top: 10px;}
+        
+        .cta-link { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #718096; text-decoration: none; border-top: 1px dashed #cbd5e0; padding-top: 15px; }
+        .highlight { color: #e53e3e; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏫 香港学校入学测评 Pro</h2>
+    <p class="subtitle">精准匹配本地学制与英/美学制差异</p>
+    
+    <div class="form-group">
+        <label>孩子的出生日期</label>
+        <input type="date" id="dob">
+    </div>
+
+    <div class="form-group">
+        <label>目标入学年份 <span class="sub-label">(通常为9月)</span></label>
+        <select id="targetYear">
+            <option value="2025">2025年 9月</option>
+            <option value="2026" selected>2026年 9月</option>
+            <option value="2027">2027年 9月</option>
+            <option value="2028">2028年 9月</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>目标学校类型</label>
+        <div class="radio-group">
+            <div class="radio-option">
+                <input type="radio" name="schoolType" id="typeLocal" value="local" checked>
+                <label for="typeLocal">本地/英基/加拿大<br><span style="font-size:10px">(1月-12月计算)</span></label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="schoolType" id="typeUk" value="uk">
+                <label for="typeUk">传统英式/哈罗<br><span style="font-size:10px">(9月-8月计算)</span></label>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="calculateGrade()">生成测评报告</button>
+
+    <div id="result" class="result-box">
+        <div class="main-grade" id="gradeDisplay"></div>
+        <div class="sub-info" id="explanation"></div>
+        
+        <div class="cta-link">
+            需确认具体学校（如哈罗/汉基）的特殊要求？<br>
+            👉 <a href="#" style="color:#3182ce; font-weight:bold;">关注微信公众号[家有港宝养成笔记]，加大D为好友 获取《全港Top50国际学校年龄对照表》</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateGrade() {
+        const dobInput = document.getElementById('dob').value;
+        const targetYear = parseInt(document.getElementById('targetYear').value);
+        const schoolType = document.querySelector('input[name="schoolType"]:checked').value;
+        
+        if (!dobInput) { alert("请选择出生日期"); return; }
+        
+        const dob = new Date(dobInput);
+        const birthYear = dob.getFullYear();
+        const birthMonth = dob.getMonth() + 1; 
+        
+        let gradeText = "";
+        let logicText = "";
+
+        // 计算目标年份9月时的年龄
+        // 注意：这里需要根据学制计算“入学年龄逻辑”
+
+        if (schoolType === 'local') {
+            // --- 逻辑 A：自然年 (1.1 - 12.31) ---
+            // 适用：本地学校, ESF(新制), CDNIS
+            // 规则：入学年份 - 出生年份 = 6 -> 小一/Year 1 (部分Year 1对应5岁，这里取通用的本地P1=6岁逻辑，ESF Year1=5岁)
+            
+            let ageByYear = targetYear - birthYear;
+            
+            if (ageByYear === 3) gradeText = "K1 (幼儿班)";
+            else if (ageByYear === 4) gradeText = "K2 (低班)";
+            else if (ageByYear === 5) gradeText = "K3 (高班) / ESF Year 1"; // ESF Y1 is 5 turning 6
+            else if (ageByYear === 6) gradeText = "P1 (小一) / ESF Year 2";
+            else if (ageByYear > 6) gradeText = `P${ageByYear - 5} (小${ageByYear - 5})`;
+            else gradeText = "PN (学前班)";
+
+            logicText = `依据<strong>自然年</strong>计算（1月1日-12月31日划线）。<br>适用于：所有本地学校、英基(ESF)、加拿大国际等。`;
+        } else {
+            // --- 逻辑 B：学年 (9.1 - 8.31) ---
+            // 适用：Harrow, Kellett, 这里的逻辑通常稍微超前一点
+            // 举例：2026年9月入学
+            // 如果孩子是 2020年8月生 (6岁刚满)，入读 Year 2
+            // 如果孩子是 2020年10月生 (5岁将满6)，入读 Year 1
+            
+            // 算法修正：看孩子在 TargetYear 的 8月31日 是否已满 N 岁
+            // 英国学制 Year 1 通常接纳 5岁 (turning 6 within the school year)
+            // 即：出生在 (TargetYear - 6) 的 9.1 到 (TargetYear - 5) 的 8.31
+            
+            // 为了简化代码，我们将日期标准化为浮点数年份来比较
+            // 比如 2020.09 (9月)
+            
+            // 计算逻辑：
+            // Year 1 对应出生区间：[TargetYear-6].9.1 到 [TargetYear-5].8.31
+            // 让我们反推：
+            // 如果入学时(TargetYear.9)，孩子实足年龄满5周岁但不足6周岁 -> Year 1
+            
+            // 计算入学当年的8月31日时的年龄
+            let ageYears = targetYear - birthYear;
+            if (birthMonth > 8) {
+                ageYears -= 1; // 还没过生日，算小一岁
+            }
+
+            // 英国制：5岁读Y1，6岁读Y2
+            if (ageYears === 2) gradeText = "Nursery";
+            else if (ageYears === 3) gradeText = "Reception (类似K2)";
+            else if (ageYears === 4) gradeText = "Year 1 (部分学校/5岁)"; 
+            else if (ageYears === 5) gradeText = "Year 1 (主流英制) / Year 2"; 
+            // 修正：Harrow等严格英制，5岁读Year 1。
+            // 2020.9 - 2021.8 出生 -> 2026.9 入读 Year 1 (入学时5岁)
+            
+            // 重新校准逻辑 B (Strict UK):
+            // Cutoff is Aug 31.
+            // Born Sep 2020 - Aug 2021 -> Sept 2026 Entry is Year 1.
+            
+            let cohortYear = birthYear;
+            if (birthMonth >= 9) cohortYear += 1; // 9-12月出生的孩子属于下一年级组
+            
+            let ukAge = targetYear - cohortYear;
+            
+            if (ukAge === 5) gradeText = "Year 1";
+            else if (ukAge === 6) gradeText = "Year 2";
+            else if (ukAge === 4) gradeText = "Reception";
+            else if (ukAge === 3) gradeText = "Nursery";
+            else if (ukAge > 6) gradeText = `Year ${ukAge - 4}`;
+            else gradeText = "年龄偏小";
+
+            logicText = `依据<strong>学术年</strong>计算（9月1日-8月31日划线）。<br>注意：9月-12月出生的“细B”通常会读低一级。<br>适用于：哈罗、Kellett等传统英式私校。`;
+        }
+
+        // --- 渲染结果 ---
+        document.getElementById('result').style.display = "block";
+        document.getElementById('gradeDisplay').innerText = gradeText;
+        document.getElementById('explanation').innerHTML = logicText;
+    }
+</script>
+
+</body>
+</html>
