@@ -85,7 +85,7 @@
         <div class="sub-info" id="explanation"></div>
         
         <div class="qr-section">
-            <img src="qrcode.jpg" alt="扫码关注" class="qr-img">
+            <img src="qrcode.png" alt="扫码关注" class="qr-img">
             <div class="cta-text">
                 关注微信公众号 <span class="highlight-brand">[家有港宝养成笔记]</span><br>
                 加 <span class="highlight-action">大D</span> 为好友<br>
@@ -111,27 +111,51 @@
         let logicText = "";
 
         if (schoolType === 'local') {
+            // --- 逻辑 A：自然年 (1.1 - 12.31) ---
             let ageByYear = targetYear - birthYear;
-            if (ageByYear === 3) gradeText = "K1 (幼儿班)";
+            
+            if (ageByYear === 2) gradeText = "PN (学前班)";
+            else if (ageByYear === 3) gradeText = "K1 (幼儿班)";
             else if (ageByYear === 4) gradeText = "K2 (低班)";
             else if (ageByYear === 5) gradeText = "K3 (高班) / ESF Year 1"; 
             else if (ageByYear === 6) gradeText = "P1 (小一) / ESF Year 2";
-            else if (ageByYear > 6) gradeText = `P${ageByYear - 5} (小${ageByYear - 5})`;
-            else gradeText = "PN (学前班)";
+            
+            // 修正：P1-P6 之后升 S1-S6
+            else if (ageByYear > 6 && ageByYear <= 11) {
+                gradeText = `P${ageByYear - 5} (小${ageByYear - 5})`;
+            }
+            else if (ageByYear > 11 && ageByYear <= 17) {
+                // 12岁是中一 (S1)
+                gradeText = `S${ageByYear - 11} (中${ageByYear - 11})`;
+            }
+            else if (ageByYear > 17) {
+                gradeText = "大专/大学阶段";
+            }
+            else {
+                gradeText = "年龄偏小 (未达入学年龄)";
+            }
 
-            logicText = `依据<strong>自然年</strong>计算（1月1日-12月31日划线）。<br>适用于：所有本地学校、英基(ESF)、加拿大国际等。`;
+            logicText = `依据<strong>自然年</strong>计算（1月1日-12月31日划线）。<br>适用于：所有本地学校、英基(ESF)、加拿大国际等。<br>注：本地学制完成 P6 后直升 S1 (中一)。`;
         } else {
+            // --- 逻辑 B：学年 (9.1 - 8.31) ---
             let cohortYear = birthYear;
             if (birthMonth >= 9) cohortYear += 1; 
             
             let ukAge = targetYear - cohortYear;
             
-            if (ukAge === 5) gradeText = "Year 1";
-            else if (ukAge === 6) gradeText = "Year 2";
+            if (ukAge === 3) gradeText = "Nursery";
             else if (ukAge === 4) gradeText = "Reception";
-            else if (ukAge === 3) gradeText = "Nursery";
-            else if (ukAge > 6) gradeText = `Year ${ukAge - 4}`;
-            else gradeText = "年龄偏小";
+            else if (ukAge === 5) gradeText = "Year 1";
+            else if (ukAge === 6) gradeText = "Year 2";
+            else if (ukAge > 6 && ukAge <= 18) {
+                gradeText = `Year ${ukAge - 4}`;
+            }
+            else if (ukAge > 18) {
+                 gradeText = "大学阶段";
+            }
+            else {
+                 gradeText = "年龄偏小";
+            }
 
             logicText = `依据<strong>学术年</strong>计算（9月1日-8月31日划线）。<br>注意：9月-12月出生的“细B”通常会读低一级。<br>适用于：哈罗、Kellett等传统英式私校。`;
         }
